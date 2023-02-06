@@ -1,54 +1,81 @@
-import ReactDOM from "react-dom/client";
 import React from 'react';
-
-const root = ReactDOM.createRoot(
-    document.getElementById('root')
-);
-
-// let start = new Date(2023, 1, 3, 17, 38, 0);
-// let finish = new Date();
-// let diff = finish - start;
-//
-// let daysDiff = Math.floor(diff / (1000 * 60 * 60 * 24));
-// let hoursDiff = Math.floor(diff / (1000 * 60 * 60) - daysDiff * 24);
-// let minutesDiff = Math.floor(diff / (1000 * 60) - (daysDiff * 24 * 60 + hoursDiff * 60));
-// let secondsDiff = Math.floor(diff / (1000) - (daysDiff * 24 * 60 * 60 + hoursDiff * 60 * 60 + minutesDiff * 60));
 
 class Clock extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            start: new Date(2023, 1, 3, 17, 38, 0),
+            start: new Date(2022, 12, 3, 11, 26, 0),
             finish: new Date(),
-            diff: this.finish - this.start,
-            daysDiff: Math.floor(this.diff / (1000 * 60 * 60 * 24)),
-            hoursDiff: Math.floor(this.diff / (1000 * 60 * 60) - this.daysDiff * 24),
-            minutesDiff: Math.floor(this.diff / (1000 * 60) - (this.daysDiff * 24 * 60 + this.hoursDiff * 60)),
-            secondsDiff: Math.floor(this.diff / (1000) - (this.daysDiff * 24 * 60 * 60 + this.hoursDiff * 60 * 60 + this.minutesDiff * 60)),
         };
     }
 
     componentDidMount() {
+        this.timerID = setInterval(
+            () => this.tick(), 1000
+        );
     }
 
     componentWillUnmount() {
+        clearInterval(this.timerID);
+    }
+
+    tick() {
+        this.setState({
+            finish: new Date(),
+        });
+    }
+
+    getPastTime(start, finish) {
+        return finish - start;
+    }
+
+    getDaysDiff(timeDiff) {
+        return Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    }
+
+    getHoursDiff(timeDiff) {
+        return Math.floor(timeDiff / (1000 * 60 * 60) - this.getDaysDiff(timeDiff) * 24);
+    }
+
+    getMinutesDiff(timeDiff) {
+        return Math.floor(timeDiff / (1000 * 60) - (this.getDaysDiff(timeDiff) * 24 * 60 + this.getHoursDiff(timeDiff) * 60));
+    }
+
+    getSecondsDiff(timeDiff) {
+        return Math.floor(timeDiff / 1000 - (this.getDaysDiff(timeDiff) * 24 * 60 * 60 + this.getHoursDiff(timeDiff) * 60 * 60 + this.getMinutesDiff(timeDiff) * 60));
+    }
+
+    refreshStart = () => {
+        this.setState({
+            start: new Date(),
+        });
     }
 
     render() {
         return (
             <div>
-                <h1>Красавчик, еще не сломался</h1>
-                <h2>You
-                    lasted {this.state.daysDiff} days, {this.state.hoursDiff} hours, {this.state.minutesDiff} minutes, {this.state.secondsDiff} seconds.</h2>
+                <h1>
+                    You lasted:
+                </h1>
+                <h1>{
+                    `${this.getDaysDiff(this.getPastTime(this.state.start, this.state.finish))} days, 
+                     ${this.getHoursDiff(this.getPastTime(this.state.start, this.state.finish))} hours,
+                     ${this.getMinutesDiff(this.getPastTime(this.state.start, this.state.finish))} minutes,
+                     ${this.getSecondsDiff(this.getPastTime(this.state.start, this.state.finish))} seconds.
+                    `
+                }
+                </h1>
+                {this.getDaysDiff(this.getPastTime(this.state.start, this.state.finish)) ?
+                    <h2>Good job! Just go ahead!</h2> :
+                    <h2>There's not much left! keep going on!</h2>
+                }
+
+                <button onClick={this.refreshStart}>
+                    Quit smoking
+                </button>
             </div>
         )
     }
 }
-
-function tick() {
-    root.render(<Clock/>);
-}
-
-setInterval(tick, 1000);
 
 export default Clock;
