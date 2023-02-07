@@ -2,6 +2,7 @@ import './App.css';
 import Clock from "./Components/Clock/Clock";
 import React from "react";
 import Facts from "./Components/Facts/Facts";
+import Profile from "./Components/Profile/Profile";
 
 const dataFacts = [
     'Вы проживете дольше.',
@@ -13,6 +14,9 @@ const dataFacts = [
 const App = () => {
     return (
         <div className="App">
+            <div>
+                <Profile />
+            </div>
             <div>
                 <Facts dataFacts={dataFacts}/>
             </div>
